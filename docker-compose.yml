@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  laravel-docker-starter-server:
+    build: ./provisioning
+    image: laraveldockerstarter
+    depends_on:
+      - mysql
+      - mysql-test
+      - redis
+    volumes:
+      - ./:/laraveldockerstarter:cached
+
+  queue-server:
+    build: ./provisioning
+    image: laraveldockerstarter
+    command: php artisan queue:work
+    depends_on:
+      - mysql
+    volumes:
+      - ./:/laraveldockerstarter:cached
+
+  mysql:
+    image: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=laraveldockerstarter
+    volumes:
+      - ./storage/tmp/db:/var/lib/mysql:cached
+
+  mysql-test:
+    image: mysql
+    ports:
+      - '3307:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=laraveldockerstarter
+    volumes:
+      - ./storage/tmp/test:/var/lib/mysql:cached
+
+  nginx:
+    image: nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./provisioning/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+      - ./public:/laraveldockerstarter/public:cached
+    depends_on:
+      - laravel-docker-starter-server
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+
+  echo-server:
+    image: node
+    ports:
+      - 8888:8888
+    working_dir: /laraveldockerstarter
+    volumes:
+      - .:/laraveldockerstarter:cached
+    depends_on:
+      - redis
+      - laravel-docker-starter-server
+    command: 'npm start'
