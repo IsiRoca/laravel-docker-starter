@@ -3,8 +3,8 @@
 
 ## Prerequisites ##
 
-- Docker
-- Docker-compose
+- Docker >= 17.06 CE
+- Docker Compose
 - Make
 - Git
 
@@ -26,6 +26,19 @@ Execute in a terminal
 ```
 make install
 ```
+
+
+If you don't have **make** installed, you can install it with
+
+```
+sudo apt install make
+```
+
+
+Now you can access the application via http://localhost:8000.
+
+**There is no need to run ```php artisan serve```. PHP is already running in a dedicated container.**
+
 
 ## Desinstall ##
 
@@ -63,3 +76,11 @@ Into a container
 docker exec -ti NAME_CONTAINER bash
 ```
 
+
+## Contributing
+
+Do not hesitate to contribute to the project by adapting or adding features ! Bug reports or pull requests are welcome.
+
+## License
+
+This project is released under the [MIT](http://opensource.org/licenses/MIT) license.
